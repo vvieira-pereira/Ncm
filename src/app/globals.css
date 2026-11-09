@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #edefeb;
+  --surface: #f7f8f5;
+  --ink: #17201c;
+  --muted: #55615a;
+  --line: #d2d8cf;
+  --accent: #2a4b8d;
+  --on-accent: #ffffff;
+  --kraft: #dcc79f;
+  --on-kraft: #3a2f16;
+  --ok: #2f6b4a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111614;
+    --surface: #1a211e;
+    --ink: #e8ece6;
+    --muted: #9aa59d;
+    --line: #2b3530;
+    --accent: #9db5ec;
+    --on-accent: #101a30;
+    --kraft: #b9a375;
+    --on-kraft: #1f180a;
+    --ok: #86c9a2;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-kraft: var(--kraft);
+  --color-on-kraft: var(--on-kraft);
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--bg);
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* etiqueta de despacho: cantos cortados, como as tags de estoque */
+.tag {
+  background: var(--kraft);
+  color: var(--on-kraft);
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+}
+
+mark.hit {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: inherit;
+  border-radius: 2px;
+}
+
+/* unico momento de movimento autonomo: a linha da busca se desenha */
+@keyframes draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.draw {
+  transform-origin: left;
+  animation: draw 700ms cubic-bezier(0.2, 0.7, 0.2, 1) 120ms both;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.sheet-in {
+  animation: sheet-in 180ms ease-out both;
+}
+
+.row {
+  transition: background-color 120ms ease;
+}
+.row:hover {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw,
+  .sheet-in {
+    animation: none;
+  }
+  .row {
+    transition: none;
+  }
+}
