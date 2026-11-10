@@ -1,4 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+﻿# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
@@ -48,3 +48,7 @@ Tabela_NCM_*.json
 scripts/.local/
 *.local.md
 scripts/rls-check.ts
+
+AGENTS.md
+
+.dev.vars

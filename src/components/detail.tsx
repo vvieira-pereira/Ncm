@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Aliquotas } from "@/components/aliquotas";
+import { IbptBlock } from "@/components/ibpt";
 import type { Engine, NcmItem } from "@/lib/search";
 
 type Props = {
@@ -43,13 +45,13 @@ export function Detail({ engine, item, favorite, onFavorite, onClose, onOpen }: 
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center sm:items-stretch sm:justify-end" role="dialog" aria-modal="true" aria-label={`NCM ${item.codigo}`}>
       <button aria-label="Fechar detalhes" tabIndex={-1} className="absolute inset-0 bg-ink/30" onClick={onClose} />
-      <aside className="sheet-in relative flex max-h-[88dvh] w-full flex-col overflow-y-auto rounded-t-2xl border border-line bg-surface sm:max-h-none sm:w-[30rem] sm:rounded-none sm:border-y-0 sm:border-r-0">
+      <aside className="sheet-in relative flex max-h-[92dvh] w-full pb-[env(safe-area-inset-bottom)] flex-col overflow-y-auto rounded-t-2xl border border-line bg-surface sm:max-h-none sm:w-[min(32rem,60vw)] sm:rounded-none sm:border-y-0 sm:border-r-0">
         <div className="flex items-start justify-between gap-4 p-6 pb-4">
           <div>
-            <p className="tag inline-block px-3 py-1.5 font-display text-2xl font-semibold tracking-tight">{item.codigo}</p>
+            <p className="tag !px-3 !py-1.5 !text-xl">{item.codigo}</p>
             <p className="mt-2 text-sm text-muted">{item.digits.length === 8 ? "Item completo, 8 dígitos" : item.digits.length === 4 ? "Posição" : item.digits.length === 2 ? "Capítulo" : "Subposição"}</p>
           </div>
-          <button ref={closeRef} onClick={onClose} className="rounded-full border border-line px-3 py-1.5 text-sm hover:bg-bg">
+          <button ref={closeRef} onClick={onClose} className="touch rounded-full border border-line px-4 py-1.5 text-sm hover:bg-bg">
             Fechar
           </button>
         </div>
@@ -57,10 +59,10 @@ export function Detail({ engine, item, favorite, onFavorite, onClose, onOpen }: 
         <h2 className="px-6 font-display text-xl leading-snug">{item.descricao}</h2>
 
         <div className="flex flex-wrap gap-2 px-6 py-5">
-          <button onClick={copy} className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-on-accent">
+          <button onClick={copy} className="touch rounded-full bg-accent px-4 py-2 text-sm font-medium text-on-accent">
             {copied ? "Código copiado" : "Copiar código"}
           </button>
-          <button onClick={onFavorite} aria-pressed={favorite} className="rounded-full border border-line px-4 py-2 text-sm hover:bg-bg">
+          <button onClick={onFavorite} aria-pressed={favorite} className="touch rounded-full border border-line px-4 py-2 text-sm hover:bg-bg">
             {favorite ? "Remover dos favoritos" : "Salvar nos favoritos"}
           </button>
         </div>
@@ -102,9 +104,11 @@ export function Detail({ engine, item, favorite, onFavorite, onClose, onOpen }: 
           </p>
         </section>
 
+        <IbptBlock codigo={item.codigo} digits={item.digits.length} />
+
         <section className="border-t border-line px-6 py-5">
-          <h3 className="font-display text-base font-semibold">Alíquotas</h3>
-          <p className="mt-2 text-sm text-muted">Ainda não disponíveis neste portal. Confira IPI na TIPI e imposto de importação na TEC antes de decidir.</p>
+          <h3 className="font-display text-base font-semibold">IPI e imposto de importação</h3>
+          <Aliquotas codigo={item.codigo} digits={item.digits.length} />
         </section>
       </aside>
     </div>

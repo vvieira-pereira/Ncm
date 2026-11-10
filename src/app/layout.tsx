@@ -1,12 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Hanken_Grotesk } from "next/font/google";
+import { Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
-  display: "swap",
-});
 const body = Hanken_Grotesk({
   subsets: ["latin"],
   variable: "--font-hanken",
@@ -20,16 +15,24 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#edefeb" },
-    { media: "(prefers-color-scheme: dark)", color: "#111614" },
-  ],
+  themeColor: "#e9ebee",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${body.variable}`}>
-      <body className="min-h-dvh antialiased">{children}</body>
+    <html lang="pt-BR" className={body.variable} suppressHydrationWarning>
+      <head>
+        {/* aplica o tema salvo antes da pintura para nao piscar; padrao: claro */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("ncm:tema")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className="min-h-dvh antialiased" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

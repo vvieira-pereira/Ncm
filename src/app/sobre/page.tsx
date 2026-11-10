@@ -20,7 +20,7 @@ export default function Sobre() {
         </p>
         <h2 className="pt-2 font-display text-xl font-semibold">Alíquotas</h2>
         <p>
-          Este portal ainda não exibe alíquotas. Para o IPI, consulte a TIPI na página da Receita Federal. Para o imposto de importação, consulte a Tarifa Externa Comum nas resoluções da Gecex/Camex. ICMS, PIS e COFINS dependem do estado e do regime da empresa.
+          As alíquotas de IPI (TIPI, Receita Federal) e de imposto de importação (Tarifa Externa Comum, Gecex/MDIC) vêm de uma base pública reunida pelo site tabelasfiscais.com.br, fornecida sem garantia. Nem todo item tem as duas: onde a base não traz valor, o portal escreve “sem dado nesta base”, o que não significa alíquota zero. Confirme sempre na TIPI e nas resoluções da Gecex. ICMS, PIS e COFINS dependem do estado e do regime da empresa e não são exibidos.
         </p>
         <h2 className="pt-2 font-display text-xl font-semibold">Seus dados</h2>
         <p>
