@@ -10,23 +10,34 @@ const pct = (n: number) => `${n.toLocaleString("pt-BR", { maximumFractionDigits:
 const br = (iso: string) => iso.split("-").reverse().join("/");
 
 function Line({ label, row }: { label: string; row?: Row }) {
+  const lines = (row?.nota ?? "").split("\n").filter(Boolean);
+  const isNT = row?.aliquota === null && lines[0] === "NT";
+  const extra = isNT ? lines.slice(1) : lines;
+
   let value: React.ReactNode;
-  if (!row) value = <span className="text-muted">Sem dado nesta base</span>;
-  else if (row.aliquota === null && row.nota === "NT") value = <span>NT, não tributado</span>;
+  if (!row) value = <span className="text-muted">Sem dado na fonte oficial</span>;
+  else if (isNT) value = <span>NT, não tributado</span>;
   else if (row.aliquota !== null) value = <span className="font-semibold">{pct(row.aliquota)}</span>;
-  else value = <span className="text-muted">Sem dado nesta base</span>;
+  else value = <span className="text-muted">Sem dado na fonte oficial</span>;
+
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 last:border-b-0">
-      <dt className="text-sm text-muted">{label}</dt>
-      <dd className="text-right text-sm">
-        {value}
-        {row?.aliquota !== null && row?.nota && row.nota !== "NT" && <span className="mt-0.5 block text-[0.8125rem] text-muted">{row.nota}</span>}
-      </dd>
+    <div className="border-b border-line py-2.5 last:border-b-0">
+      <div className="flex items-baseline justify-between gap-4">
+        <dt className="text-sm text-muted">{label}</dt>
+        <dd className="text-right text-sm">{value}</dd>
+      </div>
+      {extra.length > 0 && (
+        <ul className="mt-1.5 space-y-1 text-[0.8125rem] leading-snug text-muted">
+          {extra.map((l) => (
+            <li key={l}>{l}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
-/** Aliquotas de IPI e II do item (8 digitos), lidas do banco. Ausencia de dado nunca vira zero. */
+/** Aliquotas de IPI (TIPI) e II (TEC) do item de 8 digitos, lidas do banco. Ausencia de dado nunca vira zero. */
 export function Aliquotas({ codigo, digits }: { codigo: string; digits: number }) {
   const [state, setState] = useState<State>({ status: "loading" });
 
@@ -61,7 +72,6 @@ export function Aliquotas({ codigo, digits }: { codigo: string; digits: number }
 
   const ipi = state.rows.find((r) => r.tributo === "IPI");
   const ii = state.rows.find((r) => r.tributo === "II");
-  const vig = ipi?.vigencia ?? ii?.vigencia;
 
   return (
     <>
@@ -70,11 +80,9 @@ export function Aliquotas({ codigo, digits }: { codigo: string; digits: number }
         <Line label="Imposto de importação (II)" row={ii} />
       </dl>
       <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted">
-        Fontes: TIPI (Receita Federal) e TEC (Gecex/MDIC), reunidas por{" "}
-        <a href="https://tabelasfiscais.com.br" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
-          tabelasfiscais.com.br
-        </a>
-        {vig ? `, dados de ${br(vig)}` : ""}. “Sem dado nesta base” não quer dizer alíquota zero. Valores informativos, sem garantia: confirme nas fontes oficiais antes de decidir.
+        Fontes oficiais: TIPI, da Receita Federal{ipi?.vigencia ? ` (atualizada até ${br(ipi.vigencia)})` : ""}, e Tarifa Externa Comum, do MDIC/Gecex
+        {ii?.vigencia ? ` (planilha de ${br(ii.vigencia)})` : ""}. A alíquota do II é a aplicada no Brasil; exceções com cota ou prazo aparecem como observação.
+        Para operações reais, confirme com seu contador ou despachante.
       </p>
     </>
   );
