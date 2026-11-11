@@ -30,6 +30,7 @@ function Marked({ text, query }: { text: string; query: string }) {
 export default function Home() {
   const [engine, setEngine] = useState<Engine | null>(null);
   const [atualizacao, setAtualizacao] = useState("");
+  const [hoje, setHoje] = useState(""); // data de quem acessa; so no cliente, para nao dar diferenca na hidratacao
   const [loadError, setLoadError] = useState(false);
   const [query, setQuery] = useState("");
   const deferred = useDeferredValue(query);
@@ -40,6 +41,7 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setHoje(new Date().toLocaleDateString("pt-BR"));
     let alive = true;
     fetch("/ncm-index.json")
       .then((r) => {
@@ -182,7 +184,7 @@ export default function Home() {
                   ? results.length === 0
                     ? "Nada encontrado. Tente outra palavra ou só os primeiros números do código."
                     : `${results.length}${results.length === 80 ? "+" : ""} resultado${results.length === 1 ? "" : "s"}`
-                  : atualizacao}
+                  : `${hoje ? `Hoje, ${hoje}. ` : ""}Tabela NCM ${atualizacao.replace(/^Vigente/, "vigente")}`}
           </p>
 
         </section>
