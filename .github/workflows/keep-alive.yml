@@ -11,6 +11,16 @@ on:
     # 18h30 de Brasilia (21h30 UTC). O primeiro passo espera ate as 19h; assim o aviso chega perto das 19h
     # mesmo que o GitHub adiante ou atrase um pouco o inicio.
     - cron: '30 21 * * *'
+    # 8 execucoes extras, silenciosas (so avisam no Discord se falharem). Horarios em UTC:
+    # 21h17, 00h17, 02h47, 05h17, 08h17, 11h17, 13h47 e 16h47 de Brasilia.
+    - cron: '17 0 * * *'
+    - cron: '17 3 * * *'
+    - cron: '47 5 * * *'
+    - cron: '17 8 * * *'
+    - cron: '17 11 * * *'
+    - cron: '47 13 * * *'
+    - cron: '47 16 * * *'
+    - cron: '17 19 * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,7 +45,7 @@ jobs:
 
       - name: Aguardar as 19h de Brasilia
         # So nas execucoes agendadas. Execucao manual ("Run workflow") roda na hora, para teste.
-        if: github.event_name == 'schedule'
+        if: github.event.schedule == '30 21 * * *'
         run: |
           ALVO=$(date -u -d 'today 22:00:00' +%s)
           AGORA=$(date -u +%s)
@@ -52,7 +62,8 @@ jobs:
         run: bash scripts/keep-alive.sh
 
       - name: Avisar no Discord (concluido)
-        if: success() && env.DISCORD_WEBHOOK_URL != ''
+        # So a execucao das 19h (e a manual) avisa quando da certo; as extras ficam em silencio.
+        if: success() && env.DISCORD_WEBHOOK_URL != '' && (github.event_name == 'workflow_dispatch' || github.event.schedule == '30 21 * * *')
         run: |
           set -u
           HORA=$(TZ=America/Sao_Paulo date '+%d/%m/%Y %H:%M (Brasília)')
